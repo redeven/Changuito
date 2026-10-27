@@ -1,0 +1,9 @@
+[data-changuito-display] {
+  font-size: calc(var(--changuito-font-size) * 0) !important;
+  cursor: pointer;
+}
+
+[data-changuito-display]::after {
+  content: attr(data-changuito-display);
+  font-size: var(--changuito-font-size);
+}
