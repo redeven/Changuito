@@ -1,9 +1,9 @@
-import { formatArs, parseUsdPrice } from "../../shared/money";
-import { convertUsdToArs } from "../../shared/taxes";
-import { SearchPriceHint } from "../components/search-price-hint";
-import type { FeatureContext, PageFeature } from "./page-feature";
+import { formatArs, parseUsdPrice } from '../../shared/money';
+import { convertUsdToArs } from '../../shared/taxes';
+import { SearchPriceHint } from '../components/search-price-hint';
+import type { FeatureContext, PageFeature } from './page-feature';
 
-const PRICE_RANGE_DISPLAY_SELECTOR = "#price_range_display";
+const PRICE_RANGE_DISPLAY_SELECTOR = '#price_range_display';
 
 export class SearchPriceRange implements PageFeature {
   private readonly hint = new SearchPriceHint();
@@ -11,10 +11,11 @@ export class SearchPriceRange implements PageFeature {
   refresh({ settings, exchangeRate }: FeatureContext): void {
     const rangeDisplay = document.querySelector(PRICE_RANGE_DISPLAY_SELECTOR);
     if (!rangeDisplay || !exchangeRate) return;
-    if (!this.hint.isMounted) this.hint.mount(rangeDisplay, "afterend");
+    if (!this.hint.isMounted) this.hint.mount(rangeDisplay, 'afterend');
 
-    const maximumUsd = parseUsdPrice(rangeDisplay.textContent ?? "");
-    const hint = maximumUsd === null ? "" : `Menos de ${formatArs(convertUsdToArs(maximumUsd, exchangeRate.sellRate, settings))}`;
+    const maximumUsd = parseUsdPrice(rangeDisplay.textContent ?? '');
+    const hint =
+      maximumUsd === null ? '' : `Menos de ${formatArs(convertUsdToArs(maximumUsd, exchangeRate.rate, settings))}`;
     this.hint.update(hint);
   }
 }

@@ -1,10 +1,11 @@
-import type { ExchangeRate } from "../../shared/exchange-rate";
-import { formatArs, formatPercent } from "../../shared/money";
-import type { Settings } from "../../shared/settings";
-import { effectiveArsPerUsd, totalTaxPercent } from "../../shared/taxes";
-import { h } from "../../ui/element-builder";
-import { ShadowComponent } from "../../ui/shadow-component";
-import { sidebarHeading } from "./sidebar-heading";
+import type { ExchangeRate } from '../../shared/exchange-rate';
+import { findExchangeRateSource } from '../../shared/exchange-rate-sources';
+import { formatArs, formatPercent } from '../../shared/money';
+import type { Settings } from '../../shared/settings';
+import { effectiveArsPerUsd, totalTaxPercent } from '../../shared/taxes';
+import { h } from '../../ui/element-builder';
+import { ShadowComponent } from '../../ui/shadow-component';
+import { sidebarHeading } from './sidebar-heading';
 
 export type ExchangeRatePanelState = {
   exchangeRate: ExchangeRate;
@@ -26,24 +27,25 @@ const exchangeRatePanelStyles = `
 
 export class ExchangeRatePanel extends ShadowComponent {
   constructor() {
-    super("changuito-exchange-rate", exchangeRatePanelStyles);
+    super('changuito-exchange-rate', exchangeRatePanelStyles);
   }
 
   update({ exchangeRate, settings }: ExchangeRatePanelState): void {
-    const isCompact = settings.sidebarStyle === "compact";
-    const arsPerUsd = effectiveArsPerUsd(exchangeRate.sellRate, settings);
+    const isCompact = settings.sidebarStyle === 'compact';
+    const arsPerUsd = effectiveArsPerUsd(exchangeRate.rate, settings);
     this.replaceContent(
-      sidebarHeading("Cotización del dólar"),
-      h("div", { className: "sidebar-block" }, [
-        h("p", { className: "rate" }, [`1 USD ≈ ${formatArs(arsPerUsd)}`]),
+      sidebarHeading('Cotización del dólar'),
+      h('div', { className: 'sidebar-block' }, [
+        h('p', { className: 'rate' }, [`1 USD ≈ ${formatArs(arsPerUsd)}`]),
         !isCompact &&
-          h("p", { className: "details muted" }, [
-            `Dólar oficial ${formatArs(exchangeRate.sellRate)} + ${formatPercent(totalTaxPercent(settings))} de impuestos ` +
+          h('p', { className: 'details muted' }, [
+            `${findExchangeRateSource(exchangeRate.sourceId).name} ${formatArs(exchangeRate.rate)} + ${formatPercent(totalTaxPercent(settings))} de impuestos ` +
               `(${formatPercent(settings.nationalTaxPercent)} nacionales y ${formatPercent(settings.provincialTaxPercent)} provinciales).`,
           ]),
         !isCompact &&
-          h("p", { className: "details muted" }, [`Cotización del ${exchangeRate.sourceDate} · Fuente: Ámbito`]),
-      ]),
+          exchangeRate.sourceDate &&
+          h('p', { className: 'details muted' }, [`Cotización del ${exchangeRate.sourceDate}`]),
+      ])
     );
   }
 }

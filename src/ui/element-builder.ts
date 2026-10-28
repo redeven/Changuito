@@ -13,7 +13,7 @@ export type Child = Node | string | false | null | undefined;
 export function h<TagName extends keyof HTMLElementTagNameMap>(
   tagName: TagName,
   options: ElementOptions = {},
-  children: readonly Child[] = [],
+  children: readonly Child[] = []
 ): HTMLElementTagNameMap[TagName] {
   const element = document.createElement(tagName);
   if (options.className) element.className = options.className;

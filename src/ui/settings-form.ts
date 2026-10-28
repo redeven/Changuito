@@ -1,16 +1,17 @@
-import type { ExchangeRate } from "../shared/exchange-rate";
-import { formatArs } from "../shared/money";
-import { type DisplayMode, type Settings, type SidebarStyle, saveSettings } from "../shared/settings";
-import { effectiveArsPerUsd } from "../shared/taxes";
-import { h } from "./element-builder";
-import { ShadowComponent } from "./shadow-component";
+import type { ExchangeRate } from '../shared/exchange-rate';
+import { EXCHANGE_RATE_SOURCES, type ExchangeRateSourceId } from '../shared/exchange-rate-sources';
+import { formatArs } from '../shared/money';
+import { type DisplayMode, type Settings, type SidebarStyle, saveSettings } from '../shared/settings';
+import { effectiveArsPerUsd } from '../shared/taxes';
+import { h } from './element-builder';
+import { ShadowComponent } from './shadow-component';
 
 export type SettingsFormState = {
   settings: Settings;
   exchangeRate: ExchangeRate | null;
 };
 
-type PercentSettingKey = "nationalTaxPercent" | "provincialTaxPercent";
+type PercentSettingKey = 'nationalTaxPercent' | 'provincialTaxPercent';
 
 const SAVE_DELAY_MS = 400;
 
@@ -81,6 +82,11 @@ const settingsFormStyles = `
     width: 110px;
   }
 
+  .exchange-rate {
+    margin-top: 18px;
+    padding-top: 8px;
+  }
+
   .exchange-rate p {
     margin: 0 0 6px;
   }
@@ -94,43 +100,52 @@ function debounce<Args extends unknown[]>(callback: (...args: Args) => void, del
   };
 }
 
+function populateSelect<Value extends string>(
+  select: HTMLSelectElement,
+  options: ReadonlyArray<[Value, string]>
+): HTMLSelectElement {
+  select.className = 'field-input';
+  select.append(...options.map(([value, text]) => h('option', { attributes: { value } }, [text])));
+  return select;
+}
+
 function selectField<Value extends string>(
   id: string,
   label: string,
   help: string,
   select: HTMLSelectElement,
-  options: ReadonlyArray<[Value, string]>,
+  options: ReadonlyArray<[Value, string]>
 ): HTMLElement {
-  select.className = "field-input";
-  select.append(...options.map(([value, text]) => h("option", { attributes: { value } }, [text])));
+  populateSelect(select, options);
   select.id = id;
-  return h("div", { className: "field" }, [
-    h("label", { attributes: { for: select.id } }, [label]),
+  return h('div', { className: 'field' }, [
+    h('label', { attributes: { for: select.id } }, [label]),
     select,
-    h("small", {}, [help]),
+    h('small', {}, [help]),
   ]);
 }
 
 function percentField(id: string, label: string, input: HTMLInputElement): HTMLElement {
-  input.type = "number";
-  input.min = "0";
-  input.step = "0.01";
+  input.type = 'number';
+  input.min = '0';
+  input.step = '0.01';
   input.id = id;
-  return h("div", { className: "field" }, [
-    h("label", { attributes: { for: input.id } }, [label]),
-    h("div", { className: "field-input percent-input" }, [input, h("span", { className: "muted" }, ["%"])]),
+  return h('div', { className: 'field' }, [
+    h('label', { attributes: { for: input.id } }, [label]),
+    h('div', { className: 'field-input percent-input' }, [input, h('span', { className: 'muted' }, ['%'])]),
   ]);
 }
 
 export class SettingsForm extends ShadowComponent {
-  private readonly displayModeSelect = h("select");
-  private readonly sidebarStyleSelect = h("select");
-  private readonly nationalTaxInput = h("input");
-  private readonly provincialTaxInput = h("input");
-  private readonly exchangeRateSection = h("div", { className: "exchange-rate" });
+  private readonly displayModeSelect = h('select');
+  private readonly sidebarStyleSelect = h('select');
+  private readonly exchangeRateSourceSelect = h('select', { attributes: { 'aria-label': 'Cotización del dólar' } });
+  private readonly nationalTaxInput = h('input');
+  private readonly provincialTaxInput = h('input');
+  private readonly exchangeRateSection = h('div', { className: 'exchange-rate' });
 
   constructor(onClose?: () => void) {
-    super("changuito-settings-form", settingsFormStyles);
+    super('changuito-settings-form', settingsFormStyles);
     this.replaceContent(this.buildForm(onClose));
     this.bindInputs();
   }
@@ -138,6 +153,7 @@ export class SettingsForm extends ShadowComponent {
   update({ settings, exchangeRate }: SettingsFormState): void {
     this.syncValue(this.displayModeSelect, settings.displayMode);
     this.syncValue(this.sidebarStyleSelect, settings.sidebarStyle);
+    this.syncValue(this.exchangeRateSourceSelect, settings.exchangeRateSourceId);
     this.syncValue(this.nationalTaxInput, String(settings.nationalTaxPercent));
     this.syncValue(this.provincialTaxInput, String(settings.provincialTaxPercent));
     this.exchangeRateSection.replaceChildren(...this.exchangeRateDetails(settings, exchangeRate));
@@ -145,58 +161,78 @@ export class SettingsForm extends ShadowComponent {
 
   private buildForm(onClose?: () => void): HTMLElement {
     const version = browser.runtime.getManifest().version;
-    return h("div", { className: "form" }, [
-      h("header", {}, [
-        h("div", {}, [
-          h("p", { className: "title" }, ["Configuración de Changuito"]),
-          h("span", { className: "version muted" }, [`Versión ${version}`]),
+    return h('div', { className: 'form' }, [
+      h('header', {}, [
+        h('div', {}, [
+          h('p', { className: 'title' }, ['Configuración de Changuito']),
+          h('span', { className: 'version muted' }, [`Versión ${version}`]),
         ]),
         onClose &&
-          h("button", { className: "close-button", attributes: { type: "button", "aria-label": "Cerrar" }, on: { click: onClose } }, ["×"]),
+          h(
+            'button',
+            {
+              className: 'close-button',
+              attributes: { 'type': 'button', 'aria-label': 'Cerrar' },
+              on: { click: onClose },
+            },
+            ['×']
+          ),
       ]),
-      h("section", {}, [
-        h("h3", {}, ["Impuestos"]),
-        percentField("national-tax", "Impuestos nacionales", this.nationalTaxInput),
-        percentField("provincial-tax", "Impuestos provinciales", this.provincialTaxInput),
+      h('section', {}, [
+        h('h3', {}, ['Cotización']),
+        h('div', { className: 'field' }, [
+          populateSelect<ExchangeRateSourceId>(
+            this.exchangeRateSourceSelect,
+            EXCHANGE_RATE_SOURCES.map((source) => [source.id, source.name])
+          ),
+        ]),
       ]),
-      h("section", {}, [
-        h("h3", {}, ["Visualización"]),
+      h('section', {}, [
+        h('h3', {}, ['Impuestos']),
+        percentField('national-tax', 'Impuestos nacionales', this.nationalTaxInput),
+        percentField('provincial-tax', 'Impuestos provinciales', this.provincialTaxInput),
+        this.exchangeRateSection,
+      ]),
+      h('section', {}, [
+        h('h3', {}, ['Visualización']),
         selectField<DisplayMode>(
-          "display-mode",
-          "Preferencia de visualización de precios",
-          "El modo inteligente muestra el precio en dólares cuando tu saldo de Steam alcanza para pagarlo, y en pesos cuando no.",
+          'display-mode',
+          'Preferencia de visualización de precios',
+          'El modo inteligente muestra el precio en dólares cuando tu saldo de Steam alcanza para pagarlo, y en pesos cuando no.',
           this.displayModeSelect,
           [
-            ["smart", "Modo inteligente"],
-            ["ars", "Por defecto en pesos"],
-            ["usd", "Por defecto en dólares"],
-          ],
+            ['smart', 'Modo inteligente'],
+            ['ars', 'Por defecto en pesos'],
+            ['usd', 'Por defecto en dólares'],
+          ]
         ),
         selectField<SidebarStyle>(
-          "sidebar-style",
-          "Paneles en la barra lateral",
-          "Paneles de cotización y análisis de precio regional en la página de cada juego.",
+          'sidebar-style',
+          'Paneles en la barra lateral',
+          'Paneles de cotización y análisis de precio regional en la página de cada juego.',
           this.sidebarStyleSelect,
           [
-            ["normal", "Normal"],
-            ["compact", "Minificados"],
-            ["hidden", "Ocultos"],
-          ],
+            ['normal', 'Normal'],
+            ['compact', 'Minificados'],
+            ['hidden', 'Ocultos'],
+          ]
         ),
       ]),
-      h("section", {}, [h("h3", {}, ["Cotización"]), this.exchangeRateSection]),
     ]);
   }
 
   private bindInputs(): void {
-    this.displayModeSelect.addEventListener("change", () => {
+    this.displayModeSelect.addEventListener('change', () => {
       void saveSettings({ displayMode: this.displayModeSelect.value as DisplayMode });
     });
-    this.sidebarStyleSelect.addEventListener("change", () => {
+    this.sidebarStyleSelect.addEventListener('change', () => {
       void saveSettings({ sidebarStyle: this.sidebarStyleSelect.value as SidebarStyle });
     });
-    this.bindPercentInput(this.nationalTaxInput, "nationalTaxPercent");
-    this.bindPercentInput(this.provincialTaxInput, "provincialTaxPercent");
+    this.exchangeRateSourceSelect.addEventListener('change', () => {
+      void saveSettings({ exchangeRateSourceId: this.exchangeRateSourceSelect.value as ExchangeRateSourceId });
+    });
+    this.bindPercentInput(this.nationalTaxInput, 'nationalTaxPercent');
+    this.bindPercentInput(this.provincialTaxInput, 'provincialTaxPercent');
   }
 
   private bindPercentInput(input: HTMLInputElement, settingKey: PercentSettingKey): void {
@@ -204,7 +240,7 @@ export class SettingsForm extends ShadowComponent {
       const percent = input.valueAsNumber;
       if (Number.isFinite(percent) && percent >= 0) void saveSettings({ [settingKey]: percent });
     }, SAVE_DELAY_MS);
-    input.addEventListener("input", savePercent);
+    input.addEventListener('input', savePercent);
   }
 
   private syncValue(field: HTMLInputElement | HTMLSelectElement, value: string): void {
@@ -212,11 +248,14 @@ export class SettingsForm extends ShadowComponent {
   }
 
   private exchangeRateDetails(settings: Settings, exchangeRate: ExchangeRate | null): HTMLElement[] {
-    if (!exchangeRate) return [h("p", { className: "muted" }, ["No se pudo obtener la cotización del dólar."])];
+    if (!exchangeRate) return [h('p', { className: 'muted' }, ['No se pudo obtener la cotización del dólar.'])];
     return [
-      h("p", {}, [`Dólar oficial (venta): ${formatArs(exchangeRate.sellRate)}`]),
-      h("p", { className: "highlight" }, [`1 USD ≈ ${formatArs(effectiveArsPerUsd(exchangeRate.sellRate, settings))} con impuestos`]),
-      h("p", { className: "muted" }, [`Cotización del ${exchangeRate.sourceDate} · Fuente: Ámbito`]),
+      h('p', { className: 'highlight' }, [
+        `1 USD ≈ ${formatArs(effectiveArsPerUsd(exchangeRate.rate, settings))} con impuestos`,
+      ]),
+      ...(exchangeRate.sourceDate
+        ? [h('p', { className: 'muted' }, [`Cotización del ${exchangeRate.sourceDate}`])]
+        : []),
     ];
   }
 }

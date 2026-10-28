@@ -1,7 +1,7 @@
-import { SettingsButton } from "../components/settings-button";
-import { SettingsPanel } from "../components/settings-panel";
-import { CLASSIC_HEADER_ACTIONS_SELECTOR, findReactHeaderActions, isRenderedByReact } from "../steam-header";
-import type { FeatureContext, PageFeature } from "./page-feature";
+import { SettingsButton } from '../components/settings-button';
+import { SettingsPanel } from '../components/settings-panel';
+import { CLASSIC_HEADER_ACTIONS_SELECTOR, findReactHeaderActions, isRenderedByReact } from '../steam-header';
+import type { FeatureContext, PageFeature } from './page-feature';
 
 const MAX_REACT_HEADER_CHECKS = 20;
 
@@ -13,7 +13,7 @@ export class SettingsEntry implements PageFeature {
   private isReactHeaderCheckScheduled = false;
 
   refresh(context: FeatureContext): void {
-    if (!this.panel.isMounted) this.panel.mount(document.body, "beforeend");
+    if (!this.panel.isMounted) this.panel.mount(document.body, 'beforeend');
     if (!this.button.isMounted) this.mountButton();
     if (context === this.lastContext) return;
     this.lastContext = context;
@@ -23,12 +23,12 @@ export class SettingsEntry implements PageFeature {
   private mountButton(): void {
     const classicHeaderActions = document.querySelector(CLASSIC_HEADER_ACTIONS_SELECTOR);
     if (classicHeaderActions) {
-      this.button.mount(classicHeaderActions, "afterbegin");
+      this.button.mount(classicHeaderActions, 'afterbegin');
       return;
     }
     const reactHeaderActions = findReactHeaderActions();
     if (!reactHeaderActions) return;
-    if (isRenderedByReact(reactHeaderActions)) this.button.mount(reactHeaderActions, "afterbegin");
+    if (isRenderedByReact(reactHeaderActions)) this.button.mount(reactHeaderActions, 'afterbegin');
     else this.scheduleReactHeaderCheck();
   }
 

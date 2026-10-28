@@ -1,6 +1,6 @@
 export type DomChangeHandler = (changedRoots: readonly Node[]) => void;
 
-const extensionTagPrefix = "CHANGUITO-";
+const extensionTagPrefix = 'CHANGUITO-';
 
 function isExtensionNode(node: Node): boolean {
   return node.nodeName.startsWith(extensionTagPrefix);
@@ -32,7 +32,7 @@ export class DomWatcher {
 
   private collect(mutations: readonly MutationRecord[]): void {
     for (const mutation of mutations) {
-      if (mutation.type === "characterData") {
+      if (mutation.type === 'characterData') {
         this.enqueue(mutation.target.parentElement);
         continue;
       }

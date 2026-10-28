@@ -1,6 +1,6 @@
-import { VALVE_LATAM_PRICING_TIERS, type ValvePricingTier } from "./valve-pricing-tables";
+import { VALVE_LATAM_PRICING_TIERS, type ValvePricingTier } from './valve-pricing-tables';
 
-export type RegionalPriceStatus = "none" | "elevated" | "fair" | "cheap" | "excellent";
+export type RegionalPriceStatus = 'none' | 'elevated' | 'fair' | 'cheap' | 'excellent';
 
 export type ProductPrices = {
   usInitial: number;
@@ -24,7 +24,7 @@ export const MATCHING_DIFFERENCE_LIMIT_PERCENT = 1;
 
 export function findNearestPricingTier(usdPrice: number): ValvePricingTier {
   return VALVE_LATAM_PRICING_TIERS.reduce((nearest, tier) =>
-    Math.abs(tier.usdPrice - usdPrice) < Math.abs(nearest.usdPrice - usdPrice) ? tier : nearest,
+    Math.abs(tier.usdPrice - usdPrice) < Math.abs(nearest.usdPrice - usdPrice) ? tier : nearest
   );
 }
 
@@ -37,9 +37,9 @@ function percentDifference(actual: number, reference: number): number {
 }
 
 function statusFromSuggestedDifference(differencePercent: number): RegionalPriceStatus {
-  if (differencePercent > FAIR_DIFFERENCE_LIMIT_PERCENT) return "elevated";
-  if (differencePercent < -FAIR_DIFFERENCE_LIMIT_PERCENT) return "cheap";
-  return "fair";
+  if (differencePercent > FAIR_DIFFERENCE_LIMIT_PERCENT) return 'elevated';
+  if (differencePercent < -FAIR_DIFFERENCE_LIMIT_PERCENT) return 'cheap';
+  return 'fair';
 }
 
 function isNearPurchasingPowerPrice(regionalFinal: number, purchasingPowerFinal: number): boolean {
@@ -56,9 +56,9 @@ export function analyzeRegionalPrice(prices: ProductPrices): RegionalPriceAnalys
   const hasRegionalPrice = prices.regionalFinal !== prices.usFinal;
 
   const status: RegionalPriceStatus = !hasRegionalPrice
-    ? "none"
+    ? 'none'
     : isNearPurchasingPowerPrice(prices.regionalFinal, purchasingPowerFinal)
-      ? "excellent"
+      ? 'excellent'
       : statusFromSuggestedDifference(differencePercent);
 
   return { ...prices, status, differencePercent, suggestedInitial, suggestedFinal, purchasingPowerFinal };

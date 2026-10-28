@@ -1,5 +1,5 @@
-import { h } from "../../ui/element-builder";
-import { ShadowComponent } from "../../ui/shadow-component";
+import { h } from '../../ui/element-builder';
+import { ShadowComponent } from '../../ui/shadow-component';
 
 const searchPriceHintStyles = `
   p {
@@ -10,10 +10,10 @@ const searchPriceHintStyles = `
 `;
 
 export class SearchPriceHint extends ShadowComponent {
-  private readonly text = h("p");
+  private readonly text = h('p');
 
   constructor() {
-    super("changuito-search-price-hint", searchPriceHintStyles);
+    super('changuito-search-price-hint', searchPriceHintStyles);
     this.replaceContent(this.text);
   }
 

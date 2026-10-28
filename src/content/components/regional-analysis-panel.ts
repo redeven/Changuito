@@ -1,10 +1,10 @@
-import { formatArs, formatUsd } from "../../shared/money";
-import type { Settings } from "../../shared/settings";
-import type { RegionalPriceAnalysis, RegionalPriceStatus } from "../regional/regional-analysis";
-import { REGIONAL_STATUS_LABELS, REGIONAL_STATUS_SCALE, describeRegionalPrice } from "../regional/regional-summary";
-import { h } from "../../ui/element-builder";
-import { ShadowComponent } from "../../ui/shadow-component";
-import { sidebarHeading } from "./sidebar-heading";
+import { formatArs, formatUsd } from '../../shared/money';
+import type { Settings } from '../../shared/settings';
+import type { RegionalPriceAnalysis, RegionalPriceStatus } from '../regional/regional-analysis';
+import { REGIONAL_STATUS_LABELS, REGIONAL_STATUS_SCALE, describeRegionalPrice } from '../regional/regional-summary';
+import { h } from '../../ui/element-builder';
+import { ShadowComponent } from '../../ui/shadow-component';
+import { sidebarHeading } from './sidebar-heading';
 
 export type RegionalAnalysisPanelState = {
   analysis: RegionalPriceAnalysis;
@@ -12,7 +12,7 @@ export type RegionalAnalysisPanelState = {
   convertToArs: (usdAmount: number) => number;
 };
 
-const VALVE_PRICING_TOOL_URL = "https://partner.steamgames.com/pricing/explorer";
+const VALVE_PRICING_TOOL_URL = 'https://partner.steamgames.com/pricing/explorer';
 
 const regionalAnalysisPanelStyles = `
   .meter {
@@ -94,64 +94,68 @@ type PriceRowValues = {
 };
 
 function meterStep(status: RegionalPriceStatus, selectedStatus: RegionalPriceStatus): HTMLElement {
-  const className = `meter-step ${status}${status === selectedStatus ? " selected" : ""}`;
-  return h("div", { className }, [REGIONAL_STATUS_LABELS[status]]);
+  const className = `meter-step ${status}${status === selectedStatus ? ' selected' : ''}`;
+  return h('div', { className }, [REGIONAL_STATUS_LABELS[status]]);
 }
 
 function priceRow({ label, finalUsd, initialUsd, arsEquivalent }: PriceRowValues): HTMLElement {
   const hasDiscount = initialUsd > finalUsd;
-  return h("div", { className: "price-row" }, [
-    h("span", { className: "muted" }, [label]),
-    h("span", { className: "price-values" }, [
-      h("span", { className: "highlight" }, [formatUsd(finalUsd)]),
-      hasDiscount && h("span", { className: "strikethrough" }, [formatUsd(initialUsd)]),
-      arsEquivalent !== undefined && h("span", { className: "muted" }, [`≈ ${formatArs(arsEquivalent)}`]),
+  return h('div', { className: 'price-row' }, [
+    h('span', { className: 'muted' }, [label]),
+    h('span', { className: 'price-values' }, [
+      h('span', { className: 'highlight' }, [formatUsd(finalUsd)]),
+      hasDiscount && h('span', { className: 'strikethrough' }, [formatUsd(initialUsd)]),
+      arsEquivalent !== undefined && h('span', { className: 'muted' }, [`≈ ${formatArs(arsEquivalent)}`]),
     ]),
   ]);
 }
 
 export class RegionalAnalysisPanel extends ShadowComponent {
   constructor() {
-    super("changuito-regional-analysis", regionalAnalysisPanelStyles);
+    super('changuito-regional-analysis', regionalAnalysisPanelStyles);
   }
 
   update({ analysis, settings, convertToArs }: RegionalAnalysisPanelState): void {
-    const isCompact = settings.sidebarStyle === "compact";
+    const isCompact = settings.sidebarStyle === 'compact';
     this.replaceContent(
-      sidebarHeading("Análisis de precio regional"),
-      h("div", { className: "sidebar-block" }, [
-        h("div", { className: "meter" }, REGIONAL_STATUS_SCALE.map((status) => meterStep(status, analysis.status))),
-        h("hr", { className: "divider" }),
-        h("p", { className: "summary" }, [describeRegionalPrice(analysis)]),
-        !isCompact && h("hr", { className: "divider" }),
+      sidebarHeading('Análisis de precio regional'),
+      h('div', { className: 'sidebar-block' }, [
+        h(
+          'div',
+          { className: 'meter' },
+          REGIONAL_STATUS_SCALE.map((status) => meterStep(status, analysis.status))
+        ),
+        h('hr', { className: 'divider' }),
+        h('p', { className: 'summary' }, [describeRegionalPrice(analysis)]),
+        !isCompact && h('hr', { className: 'divider' }),
         !isCompact &&
-          h("div", {}, [
+          h('div', {}, [
             priceRow({
-              label: "Precio sugerido por Valve para Argentina",
+              label: 'Precio sugerido por Valve para Argentina',
               finalUsd: analysis.suggestedFinal,
               initialUsd: analysis.suggestedInitial,
             }),
             priceRow({
-              label: "Precio actual en Argentina",
+              label: 'Precio actual en Argentina',
               finalUsd: analysis.regionalFinal,
               initialUsd: analysis.regionalInitial,
               arsEquivalent: convertToArs(analysis.regionalFinal),
             }),
             priceRow({
-              label: "Precio actual en Estados Unidos",
+              label: 'Precio actual en Estados Unidos',
               finalUsd: analysis.usFinal,
               initialUsd: analysis.usInitial,
             }),
           ]),
         !isCompact &&
-          h("p", { className: "disclaimer muted" }, [
-            "Análisis basado en la ",
-            h("a", { attributes: { href: VALVE_PRICING_TOOL_URL, target: "_blank", rel: "noopener noreferrer" } }, [
-              "herramienta oficial de precios regionales de Valve",
+          h('p', { className: 'disclaimer muted' }, [
+            'Análisis basado en la ',
+            h('a', { attributes: { href: VALVE_PRICING_TOOL_URL, target: '_blank', rel: 'noopener noreferrer' } }, [
+              'herramienta oficial de precios regionales de Valve',
             ]),
-            ".",
+            '.',
           ]),
-      ]),
+      ])
     );
   }
 }

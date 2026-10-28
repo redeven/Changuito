@@ -1,7 +1,7 @@
-export const CLASSIC_HEADER_ACTIONS_SELECTOR = "#global_action_menu";
-export const REACT_HEADER_ACTIONS_SELECTOR = "header > div > nav + div";
+export const CLASSIC_HEADER_ACTIONS_SELECTOR = '#global_action_menu';
+export const REACT_HEADER_ACTIONS_SELECTOR = 'header > div > nav + div';
 
-const reactFiberKeyPrefix = "__reactFiber$";
+const reactFiberKeyPrefix = '__reactFiber$';
 
 type PageElement = Element & { wrappedJSObject?: object };
 

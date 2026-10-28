@@ -1,7 +1,7 @@
-import { parseUsdPrice } from "../../shared/money";
-import { effectiveArsPerUsd } from "../../shared/taxes";
-import { type CartSummaryPanelState, CartSummaryPanel } from "../components/cart-summary-panel";
-import type { FeatureContext, PageFeature } from "./page-feature";
+import { parseUsdPrice } from '../../shared/money';
+import { effectiveArsPerUsd } from '../../shared/taxes';
+import { type CartSummaryPanelState, CartSummaryPanel } from '../components/cart-summary-panel';
+import type { FeatureContext, PageFeature } from './page-feature';
 
 type CartTotalLocation = {
   checkoutBlock: Element;
@@ -9,13 +9,13 @@ type CartTotalLocation = {
 };
 
 function findCartTotal(): CartTotalLocation | null {
-  const cartItemsPanel = document.querySelector(".Panel.Focusable:has(+ .Panel.Focusable)");
-  const checkoutBlock = cartItemsPanel?.nextElementSibling?.querySelector("div:has(> button.Primary)");
+  const cartItemsPanel = document.querySelector('.Panel.Focusable:has(+ .Panel.Focusable)');
+  const checkoutBlock = cartItemsPanel?.nextElementSibling?.querySelector('div:has(> button.Primary)');
   if (!checkoutBlock) return null;
-  const totalElement = [...checkoutBlock.querySelectorAll("div:not(:has(*))")].find((element) =>
-    element.textContent?.trim().startsWith("$"),
+  const totalElement = [...checkoutBlock.querySelectorAll('div:not(:has(*))')].find((element) =>
+    element.textContent?.trim().startsWith('$')
   );
-  const totalUsd = totalElement ? parseUsdPrice(totalElement.textContent ?? "") : null;
+  const totalUsd = totalElement ? parseUsdPrice(totalElement.textContent ?? '') : null;
   return totalUsd === null ? null : { checkoutBlock, totalUsd };
 }
 
@@ -42,14 +42,14 @@ export class CartSummary implements PageFeature {
     const state: CartSummaryPanelState = {
       totalUsd: cartTotal.totalUsd,
       walletBalance,
-      arsPerUsd: effectiveArsPerUsd(exchangeRate.sellRate, settings),
+      arsPerUsd: effectiveArsPerUsd(exchangeRate.rate, settings),
     };
     if (!isSameState(this.renderedState, state)) {
       this.panel.update(state);
       this.renderedState = state;
     }
     if (this.panel.host.nextElementSibling !== cartTotal.checkoutBlock) {
-      this.panel.mount(cartTotal.checkoutBlock, "beforebegin");
+      this.panel.mount(cartTotal.checkoutBlock, 'beforebegin');
     }
   }
 }

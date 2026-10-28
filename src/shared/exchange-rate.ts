@@ -1,10 +1,13 @@
+import type { ExchangeRateSourceId } from './exchange-rate-sources';
+
 export type ExchangeRate = {
-  sellRate: number;
+  sourceId: ExchangeRateSourceId;
+  rate: number;
   sourceDate: string;
   fetchedAt: number;
 };
 
-export const GET_EXCHANGE_RATE_MESSAGE = "changuito:get-exchange-rate";
+export const GET_EXCHANGE_RATE_MESSAGE = 'changuito:get-exchange-rate';
 
 export type GetExchangeRateMessage = { type: typeof GET_EXCHANGE_RATE_MESSAGE };
 

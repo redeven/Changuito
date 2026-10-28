@@ -1,10 +1,10 @@
-import { findStandaloneUsdPrice, parseUsdPrice } from "../shared/money";
-import { findReactHeaderActions } from "./steam-header";
+import { findStandaloneUsdPrice, parseUsdPrice } from '../shared/money';
+import { findReactHeaderActions } from './steam-header';
 
-const pendingBalanceMarkers = ["Pendiente", "Pending"];
+const pendingBalanceMarkers = ['Pendiente', 'Pending'];
 
 function readClassicHeaderBalance(): number | null {
-  const balanceText = document.querySelector("#header_wallet_balance")?.textContent;
+  const balanceText = document.querySelector('#header_wallet_balance')?.textContent;
   if (balanceText === undefined || balanceText === null) return null;
   return parseUsdPrice(removePendingBalance(balanceText));
 }
@@ -12,8 +12,8 @@ function readClassicHeaderBalance(): number | null {
 function readReactHeaderBalance(): number | null {
   const headerActions = findReactHeaderActions();
   if (!headerActions) return null;
-  for (const leaf of headerActions.querySelectorAll("div:not(:has(*))")) {
-    const balance = findStandaloneUsdPrice(leaf.textContent ?? "");
+  for (const leaf of headerActions.querySelectorAll('div:not(:has(*))')) {
+    const balance = findStandaloneUsdPrice(leaf.textContent ?? '');
     if (balance) return balance.amount;
   }
   return null;

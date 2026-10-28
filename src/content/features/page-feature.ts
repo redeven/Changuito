@@ -1,5 +1,5 @@
-import type { ExchangeRate } from "../../shared/exchange-rate";
-import type { Settings } from "../../shared/settings";
+import type { ExchangeRate } from '../../shared/exchange-rate';
+import type { Settings } from '../../shared/settings';
 
 export type FeatureContext = {
   settings: Settings;

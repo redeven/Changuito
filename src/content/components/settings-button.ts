@@ -1,5 +1,5 @@
-import { h } from "../../ui/element-builder";
-import { ShadowComponent } from "../../ui/shadow-component";
+import { h } from '../../ui/element-builder';
+import { ShadowComponent } from '../../ui/shadow-component';
 
 const settingsButtonStyles = `
   :host {
@@ -29,16 +29,20 @@ const settingsButtonStyles = `
 
 export class SettingsButton extends ShadowComponent {
   constructor(onActivate: () => void) {
-    super("changuito-settings-button", settingsButtonStyles);
+    super('changuito-settings-button', settingsButtonStyles);
     this.replaceContent(
       h(
-        "button",
+        'button',
         {
-          attributes: { type: "button", title: "Configuración de Changuito", "aria-label": "Configuración de Changuito" },
+          attributes: {
+            'type': 'button',
+            'title': 'Configuración de Changuito',
+            'aria-label': 'Configuración de Changuito',
+          },
           on: { click: onActivate },
         },
-        ["🧉"],
-      ),
+        ['🧉']
+      )
     );
   }
 }

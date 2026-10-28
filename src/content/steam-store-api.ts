@@ -1,6 +1,6 @@
-import type { ProductType } from "./routes";
+import type { ProductType } from './routes';
 
-export type CountryCode = "us" | "ar";
+export type CountryCode = 'us' | 'ar';
 
 export type PriceOverview = {
   initial: number;
@@ -26,7 +26,7 @@ type SteamProductEntry = {
 type SteamDetailsResponse = Record<string, SteamProductEntry>;
 
 function detailsUrl(productType: ProductType, productId: string, countryCode: CountryCode): string {
-  return productType === "app"
+  return productType === 'app'
     ? `https://store.steampowered.com/api/appdetails?appids=${productId}&cc=${countryCode}&filters=price_overview`
     : `https://store.steampowered.com/api/packagedetails?packageids=${productId}&cc=${countryCode}`;
 }
@@ -43,9 +43,9 @@ function findProductEntry(response: SteamDetailsResponse, productId: string): St
 export async function fetchPriceOverview(
   productType: ProductType,
   productId: string,
-  countryCode: CountryCode,
+  countryCode: CountryCode
 ): Promise<PriceOverview | null> {
-  const response = await fetch(detailsUrl(productType, productId, countryCode), { credentials: "omit" });
+  const response = await fetch(detailsUrl(productType, productId, countryCode), { credentials: 'omit' });
   if (!response.ok) return null;
   const entry = findProductEntry((await response.json()) as SteamDetailsResponse, productId);
   const steamPrice = entry?.success ? (entry.data?.price_overview ?? entry.data?.price) : undefined;

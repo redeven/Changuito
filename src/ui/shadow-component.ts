@@ -1,4 +1,4 @@
-import { steamThemeStyles } from "./steam-theme";
+import { steamThemeStyles } from './steam-theme';
 
 export type ExtensionTagName = `changuito-${string}`;
 
@@ -7,11 +7,11 @@ export abstract class ShadowComponent {
   protected readonly root: ShadowRoot;
   private readonly styleElement: HTMLStyleElement;
 
-  protected constructor(tagName: ExtensionTagName, componentStyles: string, hostClassName = "") {
+  protected constructor(tagName: ExtensionTagName, componentStyles: string, hostClassName = '') {
     this.host = document.createElement(tagName);
     if (hostClassName) this.host.className = hostClassName;
-    this.root = this.host.attachShadow({ mode: "closed" });
-    this.styleElement = document.createElement("style");
+    this.root = this.host.attachShadow({ mode: 'closed' });
+    this.styleElement = document.createElement('style');
     this.styleElement.textContent = `${steamThemeStyles}\n${componentStyles}`;
     this.root.append(this.styleElement);
   }

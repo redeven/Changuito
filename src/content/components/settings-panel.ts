@@ -1,6 +1,6 @@
-import { h } from "../../ui/element-builder";
-import { SettingsForm, type SettingsFormState } from "../../ui/settings-form";
-import { ShadowComponent } from "../../ui/shadow-component";
+import { h } from '../../ui/element-builder';
+import { SettingsForm, type SettingsFormState } from '../../ui/settings-form';
+import { ShadowComponent } from '../../ui/shadow-component';
 
 const settingsPanelStyles = `
   .backdrop {
@@ -43,28 +43,33 @@ export class SettingsPanel extends ShadowComponent {
   private readonly container: HTMLElement;
   private readonly form = new SettingsForm(() => this.close());
   private readonly closeOnEscape = (event: KeyboardEvent) => {
-    if (event.key === "Escape") this.close();
+    if (event.key === 'Escape') this.close();
   };
 
   constructor() {
-    super("changuito-settings-panel", settingsPanelStyles);
-    this.container = h("div", {}, [
-      h("div", { className: "backdrop", on: { click: () => this.close() } }),
-      h("aside", { className: "panel", attributes: { role: "dialog", "aria-modal": "true", "aria-label": "Configuración de Changuito" } }, [
-        this.form.host,
-      ]),
+    super('changuito-settings-panel', settingsPanelStyles);
+    this.container = h('div', {}, [
+      h('div', { className: 'backdrop', on: { click: () => this.close() } }),
+      h(
+        'aside',
+        {
+          className: 'panel',
+          attributes: { 'role': 'dialog', 'aria-modal': 'true', 'aria-label': 'Configuración de Changuito' },
+        },
+        [this.form.host]
+      ),
     ]);
     this.replaceContent(this.container);
   }
 
   open(): void {
-    this.container.classList.add("open");
-    document.addEventListener("keydown", this.closeOnEscape);
+    this.container.classList.add('open');
+    document.addEventListener('keydown', this.closeOnEscape);
   }
 
   close(): void {
-    this.container.classList.remove("open");
-    document.removeEventListener("keydown", this.closeOnEscape);
+    this.container.classList.remove('open');
+    document.removeEventListener('keydown', this.closeOnEscape);
   }
 
   update(state: SettingsFormState): void {
