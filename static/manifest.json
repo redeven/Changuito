@@ -37,6 +37,17 @@
     "https://store.steampowered.com/*",
     "https://steamcommunity.com/*"
   ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/links/*"
+      ],
+      "matches": [
+        "https://store.steampowered.com/*",
+        "https://steamcommunity.com/*"
+      ]
+    }
+  ],
   "content_scripts": [
     {
       "matches": [

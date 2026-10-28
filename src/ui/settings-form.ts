@@ -14,10 +14,26 @@ export type SettingsFormState = {
 type PercentSettingKey = 'nationalTaxPercent' | 'provincialTaxPercent';
 
 const SAVE_DELAY_MS = 400;
+type FooterLink = {
+  url: string;
+  text: string;
+  icon?: string;
+};
+
+const FOOTER_LINKS: readonly FooterLink[] = [
+  { url: 'https://github.com/redeven/Changuito', text: 'GitHub', icon: 'icons/links/github.svg' },
+];
 
 const settingsFormStyles = `
+  :host {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+
   .form {
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 28px;
     padding: 20px;
@@ -90,6 +106,29 @@ const settingsFormStyles = `
   .exchange-rate p {
     margin: 0 0 6px;
   }
+
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--steam-divider);
+    font-size: 12px;
+  }
+
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .footer-link-icon {
+    width: 16px;
+    height: 16px;
+    background-color: currentColor;
+    mask: var(--icon-url) center / contain no-repeat;
+  }
 `;
 
 function debounce<Args extends unknown[]>(callback: (...args: Args) => void, delayMs: number): (...args: Args) => void {
@@ -98,6 +137,12 @@ function debounce<Args extends unknown[]>(callback: (...args: Args) => void, del
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => callback(...args), delayMs);
   };
+}
+
+function linkIcon(icon: string): HTMLSpanElement {
+  const iconElement = h('span', { className: 'footer-link-icon', attributes: { 'aria-hidden': 'true' } });
+  iconElement.style.setProperty('--icon-url', `url("${browser.runtime.getURL(icon)}")`);
+  return iconElement;
 }
 
 function populateSelect<Value extends string>(
@@ -218,6 +263,20 @@ export class SettingsForm extends ShadowComponent {
           ]
         ),
       ]),
+      h(
+        'footer',
+        {},
+        FOOTER_LINKS.map(({ url, text, icon }) =>
+          h(
+            'a',
+            {
+              className: 'footer-link',
+              attributes: { href: url, target: '_blank', rel: 'noopener noreferrer' },
+            },
+            [icon && linkIcon(icon), text]
+          )
+        )
+      ),
     ]);
   }
 
