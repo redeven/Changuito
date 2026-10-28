@@ -111,7 +111,7 @@ function selectField<Value extends string>(
   ]);
 }
 
-function percentField(id: string, label: string, help: string, input: HTMLInputElement): HTMLElement {
+function percentField(id: string, label: string, input: HTMLInputElement): HTMLElement {
   input.type = "number";
   input.min = "0";
   input.step = "0.01";
@@ -119,7 +119,6 @@ function percentField(id: string, label: string, help: string, input: HTMLInputE
   return h("div", { className: "field" }, [
     h("label", { attributes: { for: input.id } }, [label]),
     h("div", { className: "field-input percent-input" }, [input, h("span", { className: "muted" }, ["%"])]),
-    h("small", {}, [help]),
   ]);
 }
 
@@ -157,8 +156,8 @@ export class SettingsForm extends ShadowComponent {
       ]),
       h("section", {}, [
         h("h3", {}, ["Impuestos"]),
-        percentField("national-tax", "Impuestos nacionales", "IVA del 21% sobre servicios digitales.", this.nationalTaxInput),
-        percentField("provincial-tax", "Impuestos provinciales", "Percepciones de tu provincia, si corresponden.", this.provincialTaxInput),
+        percentField("national-tax", "Impuestos nacionales", this.nationalTaxInput),
+        percentField("provincial-tax", "Impuestos provinciales", this.provincialTaxInput),
       ]),
       h("section", {}, [
         h("h3", {}, ["Visualización"]),
