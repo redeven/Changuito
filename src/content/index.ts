@@ -1,5 +1,4 @@
-import { requestExchangeRate } from '../shared/exchange-rate';
-import { loadSettings, onSettingsChanged } from '../shared/settings';
+import { loadPricingInputs, onPricingInputsChanged } from '../shared/pricing-inputs';
 import { DomWatcher } from './dom-watcher';
 import { CartSummary } from './features/cart-summary';
 import type { FeatureContext, PageFeature } from './features/page-feature';
@@ -25,8 +24,8 @@ function createPageFeatures(page: StorePage): PageFeature[] {
 
 async function start(): Promise<void> {
   const page = detectStorePage(new URL(window.location.href));
-  const [settings, exchangeRate] = await Promise.all([loadSettings(), requestExchangeRate()]);
-  let context: FeatureContext = { settings, exchangeRate, walletBalance: readWalletBalance() };
+  const pricingInputs = await loadPricingInputs();
+  let context: FeatureContext = { ...pricingInputs, walletBalance: readWalletBalance() };
 
   const features = [new SettingsEntry(), ...createPageFeatures(page)];
   let priceOverlay: PriceOverlay | null = null;
@@ -64,11 +63,7 @@ async function start(): Promise<void> {
     else updateContext({ walletBalance });
   }).start();
 
-  onSettingsChanged(async (changedSettings) => {
-    const isSourceChanged = changedSettings.exchangeRateSourceId !== context.settings.exchangeRateSourceId;
-    updateContext({ settings: changedSettings });
-    if (isSourceChanged) updateContext({ exchangeRate: await requestExchangeRate() });
-  });
+  onPricingInputsChanged(pricingInputs, updateContext);
 }
 
 void start();

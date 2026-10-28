@@ -1,3 +1,4 @@
+import { debounce } from 'es-toolkit';
 import type { ExchangeRate } from '../shared/exchange-rate';
 import { EXCHANGE_RATE_SOURCES, type ExchangeRateSourceId } from '../shared/exchange-rate-sources';
 import { formatArs } from '../shared/money';
@@ -130,14 +131,6 @@ const settingsFormStyles = `
     mask: var(--icon-url) center / contain no-repeat;
   }
 `;
-
-function debounce<Args extends unknown[]>(callback: (...args: Args) => void, delayMs: number): (...args: Args) => void {
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => callback(...args), delayMs);
-  };
-}
 
 function linkIcon(icon: string): HTMLSpanElement {
   const iconElement = h('span', { className: 'footer-link-icon', attributes: { 'aria-hidden': 'true' } });
