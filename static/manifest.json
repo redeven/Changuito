@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Changuito para Steam",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Precios de Steam en pesos argentinos con impuestos incluidos y análisis de precio regional.",
   "icons": {
     "128": "icons/icon-128.png"
