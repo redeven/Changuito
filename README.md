@@ -1,4 +1,4 @@
-[![Greasy Fork](https://img.shields.io/greasyfork/v/603075)](https://greasyfork.org/en/scripts/603075-changuito-para-steam)
+[![Firefox](https://img.shields.io/amo/v/changuito-para-steam?label=Firefox&logo=firefoxbrowser)](https://addons.mozilla.org/en-GB/firefox/addon/changuito-para-steam/) [![GreasyFork](https://img.shields.io/greasyfork/v/603075?label=GreasyFork&logo=greasyfork)](https://greasyfork.org/en/scripts/603075-changuito-para-steam)
 
 # Changuito para Steam
 
