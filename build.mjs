@@ -10,6 +10,7 @@ const packageJson = JSON.parse(await readFile('package.json', 'utf8'));
 const userscriptMetadata = [
   ['name', 'Changuito para Steam'],
   ['namespace', 'https://github.com/redeven/Changuito'],
+  ['author', 'Redeven'],
   ['version', packageJson.version],
   ['description', packageJson.description],
   ['icon', 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9c9/emoji.svg'],
