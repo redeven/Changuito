@@ -1,3 +1,4 @@
+import { platform } from '#platform';
 import { debounce } from 'es-toolkit';
 import type { ExchangeRate } from '../shared/exchange-rate';
 import { EXCHANGE_RATE_SOURCES, type ExchangeRateSourceId } from '../shared/exchange-rate-sources';
@@ -134,7 +135,7 @@ const settingsFormStyles = `
 
 function linkIcon(icon: string): HTMLSpanElement {
   const iconElement = h('span', { className: 'footer-link-icon', attributes: { 'aria-hidden': 'true' } });
-  iconElement.style.setProperty('--icon-url', `url("${browser.runtime.getURL(icon)}")`);
+  iconElement.style.setProperty('--icon-url', `url("${platform.assetUrl(icon)}")`);
   return iconElement;
 }
 
@@ -198,7 +199,7 @@ export class SettingsForm extends ShadowComponent {
   }
 
   private buildForm(onClose?: () => void): HTMLElement {
-    const version = browser.runtime.getManifest().version;
+    const version = platform.version;
     return h('div', { className: 'form' }, [
       h('header', {}, [
         h('div', {}, [

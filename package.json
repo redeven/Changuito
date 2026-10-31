@@ -1,6 +1,6 @@
 {
   "name": "changuito",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Precios de Steam en pesos argentinos con impuestos incluidos y análisis de precio regional.",
   "license": "MIT",
   "private": true,
@@ -10,11 +10,13 @@
   },
   "scripts": {
     "build": "node build.mjs",
+    "build:firefox": "node build.mjs --target=firefox",
+    "build:userscript": "node build.mjs --target=userscript",
     "watch": "node build.mjs --watch",
     "typecheck": "tsc --noEmit",
     "start": "web-ext run --source-dir dist --start-url https://store.steampowered.com",
     "lint": "web-ext lint --source-dir dist",
-    "package": "npm run build && web-ext build --source-dir dist --artifacts-dir artifacts --overwrite-dest",
+    "package": "npm run build:firefox && web-ext build --source-dir dist --artifacts-dir artifacts --overwrite-dest",
     "test": "vitest run",
     "format": "prettier --write src tests build.mjs \"static/**/*.{html,css}\""
   },

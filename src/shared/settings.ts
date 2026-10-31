@@ -1,3 +1,4 @@
+import { platform } from '#platform';
 import {
   DEFAULT_EXCHANGE_RATE_SOURCE_ID,
   type ExchangeRateSourceId,
@@ -55,18 +56,14 @@ export function normalizeSettings(stored: unknown): Settings {
 }
 
 export async function loadSettings(): Promise<Settings> {
-  const stored = await browser.storage.sync.get(SETTINGS_STORAGE_KEY);
-  return normalizeSettings(stored[SETTINGS_STORAGE_KEY]);
+  return normalizeSettings(await platform.loadValue(SETTINGS_STORAGE_KEY));
 }
 
 export async function saveSettings(changes: Partial<Settings>): Promise<void> {
   const current = await loadSettings();
-  await browser.storage.sync.set({ [SETTINGS_STORAGE_KEY]: normalizeSettings({ ...current, ...changes }) });
+  await platform.saveValue(SETTINGS_STORAGE_KEY, normalizeSettings({ ...current, ...changes }));
 }
 
 export function onSettingsChanged(listener: (settings: Settings) => void): void {
-  browser.storage.onChanged.addListener((changes, areaName) => {
-    const settingsChange = changes[SETTINGS_STORAGE_KEY];
-    if (areaName === 'sync' && settingsChange) listener(normalizeSettings(settingsChange.newValue));
-  });
+  platform.onValueChanged(SETTINGS_STORAGE_KEY, (value) => listener(normalizeSettings(value)));
 }

@@ -16,10 +16,16 @@ Requiere Node.js 24 o superior.
 
 ```sh
 npm ci
-npm run build
+npm run build              # extensión de Firefox y userscript
+npm run build:firefox      # solo la extensión de Firefox, en dist/
+npm run build:userscript   # solo el userscript, en dist-userscript/changuito.user.js
 ```
 
-La extensión compilada queda en `dist/`.
+## Userscript
+
+Además de la extensión de Firefox, Changuito se puede compilar como userscript para usarlo en cualquier navegador (Firefox, Chrome, Edge, Brave, etc.) con un gestor de userscripts como Tampermonkey, Violentmonkey o ScriptCat. Para instalarlo, abrí `dist-userscript/changuito.user.js` desde el gestor.
+
+Con el userscript, la configuración se abre desde el botón 🧉 del header de Steam o desde el menú del gestor, y se guarda en el gestor en lugar de sincronizarse con Firefox Sync.
 
 ## Créditos
 

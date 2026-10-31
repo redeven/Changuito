@@ -7,10 +7,15 @@ const MAX_REACT_HEADER_CHECKS = 20;
 
 export class SettingsEntry implements PageFeature {
   private readonly panel = new SettingsPanel();
-  private readonly button = new SettingsButton(() => this.panel.open());
+  private readonly button = new SettingsButton(() => this.openPanel());
   private lastContext: FeatureContext | null = null;
   private remainingReactHeaderChecks = MAX_REACT_HEADER_CHECKS;
   private isReactHeaderCheckScheduled = false;
+
+  openPanel(): void {
+    if (!this.panel.isMounted) this.panel.mount(document.body, 'beforeend');
+    this.panel.open();
+  }
 
   refresh(context: FeatureContext): void {
     if (!this.panel.isMounted) this.panel.mount(document.body, 'beforeend');
@@ -28,8 +33,13 @@ export class SettingsEntry implements PageFeature {
     }
     const reactHeaderActions = findReactHeaderActions();
     if (!reactHeaderActions) return;
-    if (isRenderedByReact(reactHeaderActions)) this.button.mount(reactHeaderActions, 'afterbegin');
-    else this.scheduleReactHeaderCheck();
+    // Algunos gestores de userscripts corren en un mundo aislado que no ve las propiedades de React:
+    // agotados los reintentos se monta igual, y refresh() lo vuelve a montar si React lo reemplaza.
+    if (isRenderedByReact(reactHeaderActions) || this.remainingReactHeaderChecks === 0) {
+      this.button.mount(reactHeaderActions, 'afterbegin');
+    } else {
+      this.scheduleReactHeaderCheck();
+    }
   }
 
   private scheduleReactHeaderCheck(): void {
