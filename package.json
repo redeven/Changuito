@@ -1,6 +1,6 @@
 {
   "name": "changuito",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Precios de Steam en pesos argentinos con impuestos incluidos y análisis de precio regional.",
   "license": "MIT",
   "private": true,
