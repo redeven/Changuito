@@ -12,6 +12,7 @@ const userscriptMetadata = [
   ['namespace', 'https://github.com/redeven/Changuito'],
   ['version', packageJson.version],
   ['description', packageJson.description],
+  ['icon', 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f9c9/emoji.svg'],
   ['license', packageJson.license],
   ['match', 'https://store.steampowered.com/*'],
   ['match', 'https://steamcommunity.com/app/*'],
