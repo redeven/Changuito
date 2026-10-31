@@ -1,11 +1,13 @@
-import { context, build } from 'esbuild';
+import { build } from 'esbuild';
 import { cp, readFile, rm, writeFile } from 'node:fs/promises';
+import { EXCHANGE_RATE_SOURCES } from './src/shared/exchange-rate-sources.data.ts';
 
 const targetArgument = process.argv.find((argument) => argument.startsWith('--target='));
 const target = targetArgument?.slice('--target='.length) ?? 'all';
-const isWatchMode = process.argv.includes('--watch');
 
 const packageJson = JSON.parse(await readFile('package.json', 'utf8'));
+
+const exchangeRateHosts = [...new Set(EXCHANGE_RATE_SOURCES.map((source) => new URL(source.url).hostname))];
 
 const userscriptMetadata = [
   ['name', 'Changuito para Steam'],
@@ -23,7 +25,7 @@ const userscriptMetadata = [
   ['grant', 'GM.xmlHttpRequest'],
   ['grant', 'GM.registerMenuCommand'],
   ['grant', 'GM_addValueChangeListener'],
-  ['connect', 'mercados.ambito.com'],
+  ...exchangeRateHosts.map((host) => ['connect', host]),
 ];
 
 const userscriptBanner = [
@@ -37,8 +39,12 @@ const targets = {
     outdir: 'dist',
     prepare: async () => {
       await cp('static', 'dist', { recursive: true });
-      const manifest = await readFile('dist/manifest.json', 'utf8');
-      await writeFile('dist/manifest.json', manifest.replace('__CHANGUITO_VERSION__', packageJson.version));
+      const manifest = JSON.parse(await readFile('dist/manifest.json', 'utf8'));
+      manifest.version = packageJson.version;
+      manifest.host_permissions = [
+        ...new Set([...manifest.host_permissions, ...exchangeRateHosts.map((host) => `https://${host}/*`)]),
+      ];
+      await writeFile('dist/manifest.json', `${JSON.stringify(manifest, null, 2)}\n`);
     },
     options: {
       entryPoints: {
@@ -79,10 +85,5 @@ for (const name of selectedTargets) {
   await rm(outdir, { recursive: true, force: true });
   await prepare();
 
-  if (isWatchMode) {
-    const buildContext = await context(buildOptions);
-    await buildContext.watch();
-  } else {
-    await build(buildOptions);
-  }
+  await build(buildOptions);
 }

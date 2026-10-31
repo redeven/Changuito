@@ -1,3 +1,7 @@
+import { EXCHANGE_RATE_SOURCES } from './exchange-rate-sources.data';
+
+export { EXCHANGE_RATE_SOURCES };
+
 export type ExchangeRateSource = {
   id: string;
   name: string;
@@ -6,17 +10,6 @@ export type ExchangeRateSource = {
   locale: string;
   datePath?: string;
 };
-
-export const EXCHANGE_RATE_SOURCES = [
-  {
-    id: 'ambito-official',
-    name: 'Dólar oficial (Ámbito)',
-    url: 'https://mercados.ambito.com//dolar/oficial/variacion',
-    valuePath: 'venta',
-    locale: 'es-AR',
-    datePath: 'fecha',
-  },
-] as const satisfies readonly ExchangeRateSource[];
 
 export type ExchangeRateSourceId = (typeof EXCHANGE_RATE_SOURCES)[number]['id'];
 

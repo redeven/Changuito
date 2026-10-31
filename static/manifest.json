@@ -33,7 +33,6 @@
     "storage"
   ],
   "host_permissions": [
-    "https://mercados.ambito.com/*",
     "https://store.steampowered.com/*",
     "https://steamcommunity.com/*"
   ],

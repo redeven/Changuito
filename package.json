@@ -12,7 +12,6 @@
     "build": "node build.mjs",
     "build:firefox": "node build.mjs --target=firefox",
     "build:userscript": "node build.mjs --target=userscript",
-    "watch": "node build.mjs --watch",
     "typecheck": "tsc --noEmit",
     "start": "web-ext run --source-dir dist --start-url https://store.steampowered.com",
     "lint": "web-ext lint --source-dir dist",
